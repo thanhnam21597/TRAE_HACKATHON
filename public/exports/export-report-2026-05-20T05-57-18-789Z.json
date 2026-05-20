@@ -1,0 +1,145 @@
+{
+  "version": "1.0.0",
+  "product": "TRAE Director",
+  "exportedAt": "2026-05-20T05:57:18.790Z",
+  "payload": {
+    "analysis": {
+      "title": "TRAE SOLO: Tăng tốc sản xuất video bằng AI",
+      "genre": "Startup Tech Story",
+      "tone": "Cinematic • Inspiring • ROI-focused",
+      "characters": [
+        "Linh (Creator)",
+        "Narrator",
+        "Mentor"
+      ],
+      "keyThemes": [
+        "Automation",
+        "Speed-to-Market",
+        "Business Impact",
+        "TRAE Integration Depth"
+      ],
+      "suggestedMusic": "Future Bass + Ambient Strings",
+      "cameraStyle": "Dynamic dolly shots + close-up emotional beats",
+      "totalScenes": 5,
+      "estimatedDuration": "01:35"
+    },
+    "scenes": [
+      {
+        "sceneNumber": 1,
+        "timestamp": "00:00",
+        "description": "Trong một thành phố không bao giờ ngủ, Linh là một product designer đang chạy deadline hackathon.",
+        "cameraAngle": "Wide shot",
+        "emotion": "Tension",
+        "duration": "00:16",
+        "prompt": "Cinematic Startup Tech Story, Cinematic • Inspiring • ROI-focused, Dynamic dolly shots + close-up emotional beats, characters: Linh (Creator), Narrator, Mentor, scene: Narrator: Trong một thành phố không bao giờ ngủ, Linh là một product designer đang chạy deadline hackathon."
+      },
+      {
+        "sceneNumber": 2,
+        "timestamp": "00:18",
+        "description": "Mình cần một cách tạo video nhanh hơn nếu muốn thắng lớn.",
+        "cameraAngle": "Medium close-up",
+        "emotion": "Curiosity",
+        "duration": "00:19",
+        "prompt": "Cinematic Startup Tech Story, Cinematic • Inspiring • ROI-focused, Dynamic dolly shots + close-up emotional beats, characters: Linh (Creator), Narrator, Mentor, scene: Linh: Mình cần một cách tạo video nhanh hơn nếu muốn thắng lớn."
+      },
+      {
+        "sceneNumber": 3,
+        "timestamp": "00:36",
+        "description": "Cô ấy mở TRAE Director, dán kịch bản, và để một intelligent agent làm phần còn lại.",
+        "cameraAngle": "Over-the-shoulder",
+        "emotion": "Momentum",
+        "duration": "00:18",
+        "prompt": "Cinematic Startup Tech Story, Cinematic • Inspiring • ROI-focused, Dynamic dolly shots + close-up emotional beats, characters: Linh (Creator), Narrator, Mentor, scene: Narrator: Cô ấy mở TRAE Director, dán kịch bản, và để một intelligent agent làm phần còn lại."
+      },
+      {
+        "sceneNumber": 4,
+        "timestamp": "00:54",
+        "description": "Hãy để AI lo pipeline, bạn tập trung vào ý tưởng và impact.",
+        "cameraAngle": "Tracking shot",
+        "emotion": "Confidence",
+        "duration": "00:20",
+        "prompt": "Cinematic Startup Tech Story, Cinematic • Inspiring • ROI-focused, Dynamic dolly shots + close-up emotional beats, characters: Linh (Creator), Narrator, Mentor, scene: Mentor: Hãy để AI lo pipeline, bạn tập trung vào ý tưởng và impact."
+      },
+      {
+        "sceneNumber": 5,
+        "timestamp": "00:72",
+        "description": "Chỉ sau vài phút, một video hoàn chỉnh với storyboard, subtitle và voiceover đã sẵn sàng trình bày.",
+        "cameraAngle": "Hero close-up",
+        "emotion": "Triumph",
+        "duration": "00:22",
+        "prompt": "Cinematic Startup Tech Story, Cinematic • Inspiring • ROI-focused, Dynamic dolly shots + close-up emotional beats, characters: Linh (Creator), Narrator, Mentor, scene: Narrator: Chỉ sau vài phút, một video hoàn chỉnh với storyboard, subtitle và voiceover đã sẵn sàng trình bày."
+      }
+    ],
+    "timeline": [
+      {
+        "id": "segment-1",
+        "start": "00:00",
+        "end": "00:16",
+        "transition": "Match Cut"
+      },
+      {
+        "id": "segment-2",
+        "start": "00:16",
+        "end": "00:35",
+        "transition": "Beat Sync"
+      },
+      {
+        "id": "segment-3",
+        "start": "00:35",
+        "end": "00:53",
+        "transition": "L-Cut"
+      },
+      {
+        "id": "segment-4",
+        "start": "00:53",
+        "end": "00:73",
+        "transition": "Speed Ramp"
+      },
+      {
+        "id": "segment-5",
+        "start": "00:73",
+        "end": "00:95",
+        "transition": "Cinematic Fade"
+      }
+    ],
+    "subtitles": [
+      {
+        "timestamp": "00:00",
+        "speaker": "Narrator",
+        "text": "Trong một thành phố không bao giờ ngủ, Linh là một product designer đang chạy deadline hackathon."
+      },
+      {
+        "timestamp": "00:08",
+        "speaker": "Linh",
+        "text": "Mình cần một cách tạo video nhanh hơn nếu muốn thắng lớn."
+      },
+      {
+        "timestamp": "00:16",
+        "speaker": "Narrator",
+        "text": "Cô ấy mở TRAE Director, dán kịch bản, và để một intelligent agent làm phần còn lại."
+      },
+      {
+        "timestamp": "00:24",
+        "speaker": "Mentor",
+        "text": "Hãy để AI lo pipeline, bạn tập trung vào ý tưởng và impact."
+      },
+      {
+        "timestamp": "00:32",
+        "speaker": "Narrator",
+        "text": "Chỉ sau vài phút, một video hoàn chỉnh với storyboard, subtitle và voiceover đã sẵn sàng trình bày."
+      },
+      {
+        "timestamp": "00:40",
+        "speaker": "Linh",
+        "text": "Đây không chỉ là tốc độ, đây là lợi thế cạnh tranh."
+      }
+    ],
+    "language": "vi-VN",
+    "metrics": {
+      "timeSaved": "87%",
+      "traditionalWorkflow": "6 hours",
+      "withTraeDirector": "47 minutes",
+      "roi": "5.8x"
+    }
+  }
+}
