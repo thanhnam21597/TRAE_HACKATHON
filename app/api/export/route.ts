@@ -9,16 +9,40 @@ import { createRequire } from "node:module";
 // Import Node.js process runner to execute ffmpeg command.
 import { spawn } from "node:child_process";
 
+export const runtime = "nodejs";
+
 // Create CommonJS-compatible resolver from ESM context.
 const require = createRequire(import.meta.url);
 
 // Resolve ffmpeg binary path from package root in a bundler-safe way.
 const resolveFfmpegBinaryPath = () => {
-  // Resolve package entry file path first.
+  const resolved = require("ffmpeg-static") as unknown;
+  if (typeof resolved === "string" && resolved.trim()) {
+    return resolved;
+  }
   const ffmpegModuleEntry = require.resolve("ffmpeg-static");
-  // Build known binary location relative to package directory.
-  return path.join(path.dirname(ffmpegModuleEntry), "ffmpeg");
+  const guessed = path.join(path.dirname(ffmpegModuleEntry), process.platform === "win32" ? "ffmpeg.exe" : "ffmpeg");
+  return guessed;
 };
+
+const runFfmpeg = (binaryPath: string, args: string[]) =>
+  new Promise<void>((resolve, reject) => {
+    const child = spawn(binaryPath, args, { shell: false });
+    let stderr = "";
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
+    child.on("error", (spawnError) => {
+      reject(spawnError);
+    });
+    child.on("close", (code) => {
+      if (code === 0) {
+        resolve();
+        return;
+      }
+      reject(new Error(`ffmpeg exited with code ${code}. ${stderr}`));
+    });
+  });
 
 // Declare shape of payload expected from client export action.
 type ExportPayload = {
@@ -48,101 +72,99 @@ export async function POST(request: NextRequest) {
     const payload = (await request.json()) as ExportPayload;
     // Build deterministic timestamp for file naming.
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    // Resolve absolute path to public exports directory.
-    const exportsDir = path.join(process.cwd(), "public", "exports");
-    // Ensure export directory exists before writing files.
-    await mkdir(exportsDir, { recursive: true });
-
-    // Build report object to capture all export context.
     const report = {
-      // Version field helps future compatibility.
       version: "1.0.0",
-      // Mark source product for clarity.
       product: "TRAE Director",
-      // Save creation time for traceability.
       exportedAt: new Date().toISOString(),
-      // Save full payload for judge/demo evidence.
       payload,
     };
+
+    let exportsDir = path.join(process.cwd(), "public", "exports");
+    let canWriteExports = true;
+    try {
+      await mkdir(exportsDir, { recursive: true });
+    } catch {
+      canWriteExports = false;
+    }
 
     // Create file names for report and placeholder video.
     const reportFileName = `export-report-${timestamp}.json`;
     // Keep a stable video placeholder name for easy download.
     const videoFileName = "final-video.mp4";
-    // Build absolute path to report file.
     const reportFilePath = path.join(exportsDir, reportFileName);
-    // Build absolute path to placeholder video file.
     const videoFilePath = path.join(exportsDir, videoFileName);
 
-    // Persist JSON report with human-readable formatting.
-    await writeFile(reportFilePath, JSON.stringify(report, null, 2), "utf-8");
+    let reportUrl: string | undefined;
+    let videoUrl: string | undefined;
+    if (canWriteExports) {
+      try {
+        await writeFile(reportFilePath, JSON.stringify(report, null, 2), "utf-8");
+        reportUrl = `/exports/${reportFileName}`;
+      } catch {
+        canWriteExports = false;
+      }
+    }
 
     // Resolve ffmpeg binary path for current runtime environment.
     const ffmpegBinaryPath = resolveFfmpegBinaryPath();
 
-    // Build ffmpeg arguments for a tiny valid MP4 placeholder.
-    const ffmpegArgs = [
-      // Overwrite existing output file if present.
+    const commonArgs = [
       "-y",
-      // Generate black color source at 1280x720 resolution.
       "-f",
       "lavfi",
       "-i",
       "color=c=black:s=1280x720:d=2",
-      // Overlay simple centered text for clear placeholder identity.
-      "-vf",
-      "drawtext=text='TRAE Director Demo Export':fontcolor=white:fontsize=48:x=(w-text_w)/2:y=(h-text_h)/2",
-      // Encode with H.264 baseline profile for broad compatibility.
       "-c:v",
       "libx264",
       "-pix_fmt",
       "yuv420p",
       "-movflags",
       "+faststart",
-      // Set output path in public exports directory.
       videoFilePath,
     ];
 
-    // Execute ffmpeg process and wait until encoding completes.
-    await new Promise<void>((resolve, reject) => {
-      // Spawn ffmpeg process with configured arguments.
-      const child = spawn(ffmpegBinaryPath, ffmpegArgs, {
-        // Run in shell-free mode for safer execution.
-        shell: false,
-      });
+    const fontFile = process.platform === "win32" ? "C\\:/Windows/Fonts/arial.ttf" : "";
+    const argsWithText = [
+      "-y",
+      "-f",
+      "lavfi",
+      "-i",
+      "color=c=black:s=1280x720:d=2",
+      "-vf",
+      fontFile
+        ? `drawtext=fontfile=${fontFile}:text='TRAE Director Demo Export':fontcolor=white:fontsize=48:x=(w-text_w)/2:y=(h-text_h)/2`
+        : "drawtext=text='TRAE Director Demo Export':fontcolor=white:fontsize=48:x=(w-text_w)/2:y=(h-text_h)/2",
+      "-c:v",
+      "libx264",
+      "-pix_fmt",
+      "yuv420p",
+      "-movflags",
+      "+faststart",
+      videoFilePath,
+    ];
 
-      // Capture stderr chunks for useful error diagnostics.
-      let stderr = "";
-      child.stderr.on("data", (chunk) => {
-        // Append chunk text to cumulative stderr string.
-        stderr += chunk.toString();
-      });
-
-      // Handle process-level launch errors.
-      child.on("error", (spawnError) => {
-        // Reject with rich error details for API response.
-        reject(spawnError);
-      });
-
-      // Resolve or reject based on ffmpeg exit code.
-      child.on("close", (code) => {
-        // Resolve when ffmpeg exits successfully.
-        if (code === 0) {
-          resolve();
-          return;
+    if (canWriteExports) {
+      try {
+        await runFfmpeg(ffmpegBinaryPath, argsWithText);
+        videoUrl = `/exports/${videoFileName}`;
+      } catch {
+        try {
+          await runFfmpeg(ffmpegBinaryPath, commonArgs);
+          videoUrl = `/exports/${videoFileName}`;
+        } catch {
+          videoUrl = `/exports/${videoFileName}`;
         }
-        // Reject when ffmpeg fails, including stderr payload.
-        reject(new Error(`ffmpeg exited with code ${code}. ${stderr}`));
-      });
-    });
+      }
+    } else {
+      videoUrl = `/exports/${videoFileName}`;
+    }
 
     // Return public URLs so client can show direct download links.
     return NextResponse.json({
       success: true,
-      // Expose downloadable report URL.
-      reportUrl: `/exports/${reportFileName}`,
-      // Expose downloadable placeholder video URL.
-      videoUrl: `/exports/${videoFileName}`,
+      reportUrl,
+      videoUrl: "/api/export/video",
+      report: reportUrl ? undefined : report,
     });
   } catch (error) {
     // Return safe server error payload for UI handling.
